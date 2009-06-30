@@ -9,12 +9,30 @@ module ActiveScaffold
     end
 
     def set_active_scaffold_constraints
+      polymorphic_associations = []
       associations_by_params = {}
       active_scaffold_config.model.reflect_on_all_associations.each do |association|
-        associations_by_params[association.klass.name.foreign_key] = association.name unless association.options[:polymorphic]
+        if association.options[:polymorphic]
+          polymorphic_associations << association.name
+        else
+          associations_by_params[association.klass.name.foreign_key] = association.name
+        end
       end
+
       params.each do |key, value|
-        active_scaffold_constraints[associations_by_params[key]] = value if associations_by_params.include? key
+        if associations_by_params.include? key
+          active_scaffold_constraints[associations_by_params[key]] = value
+        elsif key =~ /_id$/
+          klass = key.gsub(/_id$/, '').camelize.constantize rescue nil
+          if klass
+            associations = klass.reflect_on_all_associations.collect do |assoc|
+              assoc.options[:as] if polymorphic_associations.include?(assoc.options[:as]) && active_scaffold_config.model.name == assoc.class_name
+            end
+            associations.compact.each do |assoc_name|
+              active_scaffold_constraints[assoc_name] = klass.find(value)
+            end
+          end
+        end
       end
     end
 
@@ -113,12 +131,13 @@ module ActiveScaffold
         association.table_name
       end
 
-      condition = constraint_condition_for("#{table}.#{field}", value)
       if association.options[:polymorphic]
         condition = merge_conditions(
-          condition,
-          constraint_condition_for("#{table}.#{association.name}_type", params[:parent_model].to_s)
+          constraint_condition_for("#{table}.#{field}", value.send(value.class.primary_key)),
+          constraint_condition_for("#{table}.#{association.name}_type", value.class.name)
         )
+      else
+        condition = constraint_condition_for("#{table}.#{field}", value)
       end
 
       condition
@@ -153,7 +172,7 @@ module ActiveScaffold
           elsif column.plural_association?
             record.send("#{k}").send(:<<, column.association.klass.find(v))
           elsif column.association.options[:polymorphic]
-            record.send("#{k}=", params[:parent_model].constantize.find(v))
+            record.send("#{k}=", v)
           else # regular singular association
             record.send("#{k}=", column.association.klass.find(v))
 

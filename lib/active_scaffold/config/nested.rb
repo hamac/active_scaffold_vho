@@ -17,8 +17,12 @@ module ActiveScaffold::Config
     attr_accessor :shallow_delete
 
     # Add a nested ActionLink
-    def add_link(label, models, options = {})
-      @core.action_links.add('nested', options.merge(:label => label, :type => :record, :security_method => :nested_authorized?, :position => :after, :parameters => {:associations => models.join(' ')}))
+    def add_link(label, association, options = {})
+      if association.is_a? Array
+        ::ActiveSupport::Deprecation.warn("config.nested.add_link with multiple associations is not already supported. The first model will be used", caller)
+        association = association.first
+      end
+      @core.action_links.add('nested', options.merge(:label => label, :type => :record, :security_method => :nested_authorized?, :position => :after, :parameters => {:association => association}))
     end
 
     # the label for this Nested action. used for the header.

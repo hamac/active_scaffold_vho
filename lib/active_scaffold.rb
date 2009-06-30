@@ -124,6 +124,12 @@ module ActiveScaffold
           column.set_link(:none, :controller => controller.controller_path, :crud_type => nil)
         end
       end
+      active_scaffold_config.action_links.each do |action_link|
+        if action_link.action == 'nested' && action_link.parameters[:association]
+          model = active_scaffold_config.columns[action_link.parameters.delete(:association)].association.klass
+          action_link.controller = active_scaffold_controller_for(model).controller_path
+        end
+      end
     end
 
     def add_active_scaffold_path(path)

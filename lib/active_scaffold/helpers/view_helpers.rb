@@ -128,7 +128,7 @@ module ActiveScaffold
 
       def render_action_link(link, url_options)
         url_options = url_options.clone
-        url_options[:action] = link.action
+        url_options[:action] = link.action == 'nested' ? 'list' : link.action
         url_options[:controller] = link.controller if link.controller
         url_options.delete(:search) if link.controller and link.controller.to_s != params[:controller]
         url_options.merge! link.parameters if link.parameters

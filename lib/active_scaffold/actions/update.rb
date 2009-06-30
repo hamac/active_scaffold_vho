@@ -2,6 +2,7 @@ module ActiveScaffold::Actions
   module Update
     def self.included(base)
       base.before_filter :update_authorized_filter, :only => [:edit, :update]
+      base.before_filter proc{|controller| controller.send(:is_inline_form)}, :only => [:edit, :update]
       base.verify :method => [:post, :put],
                   :only => :update,
                   :redirect_to => { :action => :index }

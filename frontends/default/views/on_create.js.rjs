@@ -1,7 +1,7 @@
 cancel_selector = "##{element_form_id(:action => :create)} a.cancel".to_json
 
 if controller.send :successful?
-  if @insert_row
+  unless @parent_class_for_inline_form
     page.insert_html :top, active_scaffold_tbody_id, :partial => 'list_record', :locals => {:record => @record}
     page << "ActiveScaffold.stripe($('#{active_scaffold_tbody_id}'))"
     page << "ActiveScaffold.hide_empty_message('#{active_scaffold_tbody_id}','#{empty_message_id}');"
@@ -11,7 +11,7 @@ if controller.send :successful?
   if (active_scaffold_config.create.persistent)
     page << "$$(#{cancel_selector}).first().link.reload();"
   else
-    page << "$$(#{cancel_selector}).first().link.close#{'_with_refresh' unless @insert_row}();"
+    page << "$$(#{cancel_selector}).first().link.close#{'_with_refresh' if @parent_class_for_inline_form}();"
   end
   if (active_scaffold_config.create.edit_after_create)
     page << "var link = $('#{action_link_id 'edit', @record.id}');"

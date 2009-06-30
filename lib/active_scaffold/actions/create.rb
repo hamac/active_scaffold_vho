@@ -2,6 +2,7 @@ module ActiveScaffold::Actions
   module Create
     def self.included(base)
       base.before_filter :create_authorized_filter, :only => [:new, :create]
+      base.before_filter proc{|controller| controller.send(:is_inline_form)}, :only => [:new, :create]
       base.verify :method => :post,
                   :only => :create,
                   :redirect_to => { :action => :index }
@@ -14,7 +15,6 @@ module ActiveScaffold::Actions
 
     def create
       do_create
-      @insert_row = params[:parent_controller].nil?
       respond_to_action(:create)
     end
 
