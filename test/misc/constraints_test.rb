@@ -127,8 +127,9 @@ class ConstraintsTest < Test::Unit::TestCase
 
     @test_object.active_scaffold_config = config_for('address')
     # belongs_to :polymorphic => true
-    @test_object.params[:parent_model] = 'User'
-    assert_constraint_condition({:addressable => 14}, ['addresses.addressable_id = ?', 14, 'addresses.addressable_type = ?', 'User'], 'find all addresses for user #14')
+    user = ModelStubs::User.new
+    user.id = 14
+    assert_constraint_condition({:addressable => user}, ['addresses.addressable_id = ?', 14, 'addresses.addressable_type = ?', 'ModelStubs::User'], 'find all addresses for user #14')
   end
 
   def test_constraint_conditions_for_configured_associations
@@ -157,7 +158,9 @@ class ConstraintsTest < Test::Unit::TestCase
     @test_object.active_scaffold_config = config_for('other_address')
     # belongs_to :polymorphic => true
     @test_object.params[:parent_model] = 'OtherUser'
-    assert_constraint_condition({:other_addressable => 14}, ['addresses.other_addressable_id = ?', 14, 'addresses.other_addressable_type = ?', 'OtherUser'], 'find all addresses for user #14')
+    user = ModelStubs::OtherUser.new
+    user.id = 14
+    assert_constraint_condition({:other_addressable => user}, ['addresses.other_addressable_id = ?', 14, 'addresses.other_addressable_type = ?', 'ModelStubs::OtherUser'], 'find all addresses for user #14')
   end
 
   def test_constraint_conditions_for_normal_attributes
