@@ -78,7 +78,7 @@ module ActiveScaffold::Actions
     # A simple method to find and prepare an example new record for the form
     # May be overridden to customize the behavior (add default values, for instance)
     def do_new
-      @record = active_scaffold_config.model.new
+      @record = new_model
       apply_constraints_to_record(@record)
       @record
     end
@@ -88,7 +88,7 @@ module ActiveScaffold::Actions
     def do_create
       begin
         active_scaffold_config.model.transaction do
-          @record = update_record_from_params(active_scaffold_config.model.new, active_scaffold_config.create.columns, params[:record])
+          @record = update_record_from_params(new_model, active_scaffold_config.create.columns, params[:record])
           apply_constraints_to_record(@record, :allow_autosave => true)
           before_create_save(@record)
           self.successful = [@record.valid?, @record.associated_valid?].all? {|v| v == true} # this syntax avoids a short-circuit
@@ -99,6 +99,16 @@ module ActiveScaffold::Actions
         end
       rescue ActiveRecord::RecordInvalid
       end
+    end
+
+    def new_model
+      model = active_scaffold_config.model
+      if model.columns_hash[model.inheritance_column]
+        params = self.params # in new action inheritance_column must be in params
+        params = params[:record] || {} unless params[model.inheritance_column] # in create action must be inside record key
+        model = params.delete(model.inheritance_column).camelize.constantize if params[model.inheritance_column]
+      end
+      model.new
     end
 
     # override this method if you want to inject data in the record (or its associated objects) before the save
