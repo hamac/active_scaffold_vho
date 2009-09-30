@@ -131,6 +131,10 @@ module ActiveScaffold
         association.table_name
       end
 
+      if association.options[:primary_key]
+        value = association.klass.find(value).send(association.options[:primary_key])
+      end
+
       if association.options[:polymorphic]
         condition = merge_conditions(
           constraint_condition_for("#{table}.#{field}", value.send(value.class.primary_key)),
