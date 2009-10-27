@@ -103,7 +103,7 @@ module ActiveScaffold
     def links_for_associations
       return unless active_scaffold_config.actions.include? :list and active_scaffold_config.actions.include? :nested
       active_scaffold_config.columns.each do |column|
-        next unless column.link.nil? and column.autolink
+        next unless column.link.nil? and column.autolink?
         if column.polymorphic_association?
           # note: we can't create inline forms on singular polymorphic associations
           column.clear_link
