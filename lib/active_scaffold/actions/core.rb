@@ -76,8 +76,7 @@ module ActiveScaffold::Actions
 
     # Redirect to the main page (override if the ActiveScaffold is used as a component on another controllers page) for Javascript degradation
     def return_to_main
-      params[:controller] = parent_controller unless @parent_class_for_inline_form.nil?
-      redirect_to params_for(:action => "index", :id => nil)
+      redirect_to main_path_to_return
     end
 
     # Override this method on your controller to define conditions to be used when querying a recordset (e.g. for List). The return of this method should be any format compatible with the :conditions clause of ActiveRecord::Base's find.
