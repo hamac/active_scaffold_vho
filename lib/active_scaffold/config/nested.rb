@@ -22,7 +22,7 @@ module ActiveScaffold::Config
         ::ActiveSupport::Deprecation.warn("config.nested.add_link with multiple associations is not already supported. The first model will be used", caller)
         association = association.first
       end
-      options.merge! :label => label, :type => :record, :security_method => :nested_authorized?, :position => :after, :parameters => {:associations => association}
+      options.merge! :label => label, :type => :member, :security_method => :nested_authorized?, :position => :after, :parameters => {:associations => association}
       options[:html_options] ||= {}
       options[:html_options][:class] = [options[:html_options][:class], association].compact.join(' ')
       @core.action_links.add('nested', options)
