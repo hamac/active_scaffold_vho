@@ -23,7 +23,7 @@ module ActiveScaffold
 
       # Parameters to generate url to the main page (override if the ActiveScaffold is used as a component on another controllers page)
       def main_path_to_return
-        parameters = params.clone
+        parameters = {}
         parameters[:controller] = parent_controller unless @parent_class_for_inline_form.nil?
         parameters[:nested] = nil
         parameters[:parent_model] = nil
