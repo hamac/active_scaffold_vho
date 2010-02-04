@@ -62,7 +62,7 @@ module ActiveScaffold
           end
           return "<a class='disabled'>#{text}</a>" unless authorized
 
-          render_action_link(link, url_options)
+          render_action_link(link, url_options, record)
         else
           text
         end
