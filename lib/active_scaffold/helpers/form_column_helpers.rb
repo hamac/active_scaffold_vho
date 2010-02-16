@@ -9,7 +9,7 @@ module ActiveScaffold
         options = javascript_for_update_column(column, scope, options)
         # first, check if the dev has created an override for this specific field
         if override_form_field?(column)
-          send(override_form_field(column), @record, options[:name])
+          send(override_form_field(column), @record, options)
         # second, check if the dev has specified a valid form_ui for this column
         elsif column.form_ui and override_input?(column.form_ui)
           send(override_input(column.form_ui), column, options)
