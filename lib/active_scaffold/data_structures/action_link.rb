@@ -62,7 +62,7 @@ module ActiveScaffold::DataStructures
     # note that this is only the UI part of the security. to prevent URL hax0rz, you also need security on requests (e.g. don't execute update method unless authorized).
     attr_writer :security_method
     def security_method
-      @security_method || "#{self.label.underscore.downcase.gsub(/ /, '_')}_authorized?"
+      @security_method || "#{self.action}_authorized?"
     end
 
     def security_method_set?
@@ -70,7 +70,7 @@ module ActiveScaffold::DataStructures
     end
 
     # the crud type of the (eventual?) action. different than :method, because this crud action may not be imminent.
-    # this is used to determine record-level authorization (e.g. record.authorized_for?(:action => link.crud_type).
+    # this is used to determine record-level authorization (e.g. record.authorized_for?(:crud_type => link.crud_type).
     # options are :create, :read, :update, and :delete
     attr_accessor :crud_type
 
@@ -134,17 +134,6 @@ module ActiveScaffold::DataStructures
 
     # what type of link this is. currently supported values are :collection and :member.
     attr_accessor :type
-    # deprecated
-    def type=(value)
-      old_value = value
-      value = case value
-        when :table then :collection
-        when :record then :member
-        else value
-      end
-      ::ActiveSupport::Deprecation.warn(":#{old_value} is deprecated, use :#{value} instead", caller) if old_value != value
-      @type = value
-    end
 
     # html options for the link
     attr_accessor :html_options

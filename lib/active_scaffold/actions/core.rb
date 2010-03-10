@@ -30,8 +30,8 @@ module ActiveScaffold::Actions
     # override this method if you want to do something after render_field
     def after_render_field(record, column); end
 
-    def authorized_for?(*args)
-      active_scaffold_config.model.authorized_for?(*args)
+    def authorized_for?(options = {})
+      active_scaffold_config.model.authorized_for?(options)
     end
 
     def clear_flashes
@@ -112,10 +112,6 @@ module ActiveScaffold::Actions
 
     #Overide this method on your controller to provide model with named scopes
     def beginning_of_chain
-      if respond_to? :named_scopes_for_collection
-        ::ActiveSupport::Deprecation.warn(":named_scope_for_collection is deprecated, override beginning_of_chain instead", caller)
-        return model_with_named_scope
-      end
       active_scaffold_config.model
     end
         
