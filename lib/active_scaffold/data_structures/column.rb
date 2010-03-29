@@ -16,6 +16,9 @@ module ActiveScaffold::DataStructures
 
     # Whether this column set is collapsed by default in contexts where collapsing is supported
     attr_accessor :collapsed
+
+    # Whether to enable add_existing for this column
+    attr_accessor :allow_add_existing
     
     # Any extra parameters this particular column uses.  This is for create/update purposes.
     def params
@@ -178,7 +181,6 @@ module ActiveScaffold::DataStructures
     attr_writer :show_blank_record
     def show_blank_record?(associated)
       if @show_blank_record
-        return false if self.through_association?
         return false unless self.association.klass.authorized_for?(:crud_type => :create)
         self.plural_association? or (self.singular_association? and associated.empty?)
       end
@@ -244,6 +246,8 @@ module ActiveScaffold::DataStructures
       @show_blank_record = self.class.show_blank_record
       @actions_for_association_links = self.class.actions_for_association_links.clone if @association
       @options = {:format => :i18n_number} if @column.try(:number?)
+      @form_ui = :checkbox if @column and @column.type == :boolean
+      @allow_add_existing = true
 
       # default all the configurable variables
       self.css_class = ''
