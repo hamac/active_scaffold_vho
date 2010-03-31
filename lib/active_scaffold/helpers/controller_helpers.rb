@@ -26,7 +26,6 @@ module ActiveScaffold
         parameters = {}
         parameters[:controller] = parent_controller unless @parent_class_for_inline_form.nil?
         parameters[:nested] = nil
-        parameters[:parent_model] = nil
         parameters[:parent_column] = nil
         parameters[:parent_id] = nil
         parameters[:action] = "index"
