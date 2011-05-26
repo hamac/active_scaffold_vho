@@ -58,7 +58,7 @@ module ActionView::Rendering #:nodoc:
       remote_controller = options[:active_scaffold]
       constraints = options[:constraints]
       conditions = options[:conditions]
-      eid = Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
+      eid = options[:eid] || Digest::MD5.hexdigest(params[:controller] + remote_controller.to_s + constraints.to_s + conditions.to_s)
       session["as:#{eid}"] = {:constraints => constraints, :conditions => conditions, :list => {:label => args.first[:label]}}
       options[:params] ||= {}
       options[:params].merge! :eid => eid, :embedded => true
